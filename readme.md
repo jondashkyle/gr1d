@@ -29,20 +29,28 @@ Padding amount of the columns and row. Defaults to `1`
 Offsets the container to align the contents of the left and right columns regardless of padding amount. Defaults to `true`.
 
 ### Responsive
-Collapse all columns to full width of the container when hitting `sm`. Defaults to `true`.
+Collapse all columns to full width of the container when hitting the `sm` breakpoint. Defaults to `true`.
 
 ## Methods
 
 ### Add
 Takes either a series of arguments, or an object of options. The arguments for the shorthand are:
 
-```grid.add(columns, padding, gutter, responsive)```
+```
+grid.add(columns, padding, gutter, responsive)
+```
 
 For example, add 3 evenly sized columns, padding of 1, enable the gutter offset and do not respond for mobile:
-```grid.add(3, 1, true, false)```
+
+```
+grid.add(3, 1, true, false)
+```
 
 Alternatively, you can pass an array of column sizes to the first argument.
-```grid.add([2, 6, 4], 2)```
+
+```
+grid.add([2, 6, 4], 2)
+```
 
 Example of an options object:
 ```
