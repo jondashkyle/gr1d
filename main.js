@@ -21,10 +21,11 @@
      * Options
      */
     var options = {
-      container: opts.container || document.body,
-      pad: opts.pad || 0,
-      gutter: opts.gutter || false,
-      responsive: opts.responsive || true,
+      container: (opts.container !== undefined) ? opts.container : document.body,
+      pad: (opts.pad !== undefined) ? opts.pad : 0,
+      gutter: (opts.gutter !== undefined) ? opts.gutter : false,
+      responsive: (opts.responsive !== undefined) ? opts.responsive : true,
+      placeholder: (opts.placeholder !== undefined) ? opts.placeholder : 'Lorem Ipsum…',
     }
 
     /**
@@ -45,27 +46,40 @@
     this.row = {
       add: function add (pd, gtr) {
         var row = document.createElement('div')
+        var gutter = gtr ? (pd * 2) : 0
 
-        row.classList.add('x', 'xw', 'p' + pd, 'g' + (gtr ? (pd * 2) : 0))
-        row.setAttribute('data-gr1d-row', '')
-        el.appendChild(row)
+        row.setAttribute('grid-row', '')
+        row.setAttribute('grid-pad', pd)
+        row.setAttribute('grid-gutter', gutter)
+        
+        if (options.container !== false) {
+          el.appendChild(row)
+        }
 
         return row
       },
 
       fill: function fill (cl, pad, gutter, responsive) {
         var row = self.row.add(pad, gutter)
+
+        // Responsive
+        if (responsive) {
+          row.setAttribute('grid-responsive', '')
+        }
+
+
         if (typeof cl === 'number' && (cl % 1) === 0) {
           for (var i = 0; i < cl; i++) {
-            self.col.add(row, 'xx', pad, responsive)
+            self.col.add(row, 'auto', pad)
           }
         } else if (typeof cl === 'object' && Array.isArray(cl)) {
           for (var i = 0; i < cl.length; i++) {
-            self.col.add(row, cl[i], pad, responsive)
+            self.col.add(row, cl[i], pad)
           }
         } else {
           error('Please pass valid column option.')
         }
+        return row
       }
     }
 
@@ -77,13 +91,8 @@
         var col = document.createElement('div')
         cls = cls.trim()
 
-        // Responsive
-        if (rspnsv) {
-          col.classList.add('sm-c12')
-        }
-
         // Span
-        if (cls !== 'xx') {
+        if (cls !== 'auto') {
           cls = parseInt(cls)
           if (cls <= 0) {
             error('Please pass a column size greater than 0.')
@@ -92,19 +101,15 @@
             error('Please pass a column size less than 12.')
             return
           } else {
-            col.classList.add('c' + parseInt(cls))
+            col.setAttribute('grid-col', cls)
           }
         } else {
-          col.classList.add(cls)
+          col.setAttribute('grid-col', cls)
         }
 
-        // Padding and placeholder
-        col.classList.add('p' + pd)
-        col.innerHTML = 'Lorum Ipsum…'
-
-        // Setup and add
-        col.setAttribute('data-gr1d-col', '')
-        col.setAttribute('contenteditable', '')
+        // Padding and placeholder and add
+        col.setAttribute('grid-pad', pd)
+        col.innerHTML = options.placeholder 
         row.appendChild(col)
 
         return col
@@ -139,8 +144,7 @@
       responsive = util.isBool(responsive, options.responsive)
 
       // Fill the row
-      self.row.fill(col, pad, gutter, responsive)
-      return self
+      return self.row.fill(col, pad, gutter, responsive)
     }
 
     /**
@@ -174,6 +178,7 @@
      * Setup
      */
     this.setup = function setup () {
+      console.log(options)
       return self
     }
 
